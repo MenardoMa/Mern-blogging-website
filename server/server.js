@@ -112,6 +112,45 @@ server.post("/signup", (req, res) => {
 
 });
 
+// End-Point Sign In
+server.post("/signin", (req, res) => {
+
+    let { email, password } = req.body
+
+    User.findOne({ "personal_info.email": email })
+    .then((user) => {
+        
+        if(!user){
+            return res.status(403).json({ "error": "Email introuvable" })
+        }
+
+        bcrypt.compare(password, user.personal_info.password, (err, result) => {
+
+            if(err){
+                return res.status(403).json({ 
+                    "error": "Une erreur s'est produite lors de la connexion. Veuillez réessayer." 
+                })
+            }
+
+            if(!result){
+                return res.status(403).json({ "error": "Mot de passe incorrect" })
+            }else{
+                return res.status(200).json(formatDatatoSend(user))
+            }
+
+
+        })
+
+    })
+    .catch(err => {
+        console.log(err)
+        return res.status(403).json({ 
+            "error": "Une erreur s'est produite lors de la connexion. Veuillez réessayer."
+        })
+    })
+
+})
+
 
 
 server.listen(PORT, () => {
