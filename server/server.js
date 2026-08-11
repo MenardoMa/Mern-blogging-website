@@ -2,6 +2,7 @@ import express from "express"
 import mongoose from "mongoose"
 import dotenv from "dotenv"
 import bcrypt from "bcrypt"
+import jwt from "jsonwebtoken"
 
 // aleatoire valeur
 import { nanoid } from "nanoid"
@@ -25,8 +26,23 @@ mongoose.connect(process.env.DB_LOCATION, {
     autoIndex: true,
 })
 
-// Generate Username
+// Data Format for user
+const formatDatatoSend = (user) => {
+    
+    const access_token = jwt.sign(
+        { id: user._id }, 
+        process.env.SECRET_ACCESS_KEY,
+    )
+    
+    return {
+        access_token,
+        profile_img: user.personal_info.profile_img,
+        username: user.personal_info.username,
+        fullname: user.personal_info.fullname
+    }
+}
 
+// Generate Username
 const generateUsername = async ( email ) => {
 
     let username = email.split("@")[0]
@@ -78,9 +94,7 @@ server.post("/signup", (req, res) => {
 
         user.save()
             .then((u) => {
-            return res.status(200).json({ 
-                user: u 
-            })
+            return res.status(200).json(formatDatatoSend(u))
         })
         .catch(err => {
 
@@ -91,7 +105,7 @@ server.post("/signup", (req, res) => {
             }
 
             return res.status(500).json({ 
-                "error": err.message 
+                "error": err 
             })
         })
     })
