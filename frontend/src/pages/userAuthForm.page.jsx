@@ -3,11 +3,20 @@ import InputBox from "../components/input.component";
 import googleIcon from "../imgs/google.png"
 import AnimationWrapper from "../common/page-animation";
 import { Toaster, toast } from "react-hot-toast";
+import axios from "axios"
 
 const UserAuthForm = ({ type }) => {
 
     const userAuthThroughServer = (serverRoute, formData) => {
-        console.log(serverRoute, formData)
+        
+        axios.post(import.meta.env.VITE_SERVER_DOMAIN + serverRoute, formData)
+        .then(({ data }) => {
+            console.log(data)
+        })
+        .catch(({ response }) => {
+            toast.error(response.data.error)
+        })
+
     }
 
     const handleSubmit = (e) => {
@@ -30,22 +39,40 @@ const UserAuthForm = ({ type }) => {
         // Form Validation
         let { fullname, email, password } = formData;
 
-        if(fullname){
-            if(fullname.length < 3){
-                return toast.error("Fullname must be at least 3 letters longs")
+
+        if ( type === "sign-up" ) {
+
+            if (!fullname) {
+                return toast.error("Entrez votre nom complet")
+            }
+
+            if (fullname.trim().length < 3) {
+                return toast.error(
+                    "Le nom complet doit contenir au moins 3 caractères"
+                )
+            }
+
+            if (!password) {
+                return toast.error("Entrez votre mot de passe")
+            }
+
+            if (!passwordRegex.test(password)) {
+                return toast.error(
+                    "Le mot de passe doit contenir entre 6 et 20 caractères, avec au moins une majuscule, une minuscule et un chiffre."
+                )
             }
         }
 
-        if(!email.length){
-            return toast.error("Enter Email")
+        if (!email || !email.trim()) {
+            return toast.error("Entrez votre email")
         }
 
-        if(!emailRegex.test(email)){
-            return toast.error("Email is invalid")
+        if (!emailRegex.test(email.trim())) {
+            return toast.error("L'email est invalide")
         }
 
-        if(!passwordRegex.test(password)){
-            return toast.error("Le mot de passe doit contenir entre 6 et 20 caractères, avec au moins une majuscule, une minuscule et un chiffre.")
+        if (type === "sign-in" && !password) {
+            return toast.error("Entrez votre mot de passe")
         }
 
         userAuthThroughServer(serverRoute, formData)

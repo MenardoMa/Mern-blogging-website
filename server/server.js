@@ -3,6 +3,7 @@ import mongoose from "mongoose"
 import dotenv from "dotenv"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
+import cors from "cors"
 
 // aleatoire valeur
 import { nanoid } from "nanoid"
@@ -21,6 +22,11 @@ let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/;      // regex for
 
 // On accepte les informations devant de body
 server.use(express.json())
+
+// cors
+server.use(cors({
+    origin: "http://localhost:5173"
+}))
 
 mongoose.connect(process.env.DB_LOCATION, {
     autoIndex: true,
@@ -79,7 +85,7 @@ server.post("/signup", (req, res) => {
         return res.status(403).json({"error": "Le mot de passe doit contenir entre 6 et 20 caractères, avec au moins une majuscule, une minuscule et un chiffre."})
     }
 
-    bcrypt.hash(password, 10, async (err, hased_password) => {
+    bcrypt.hash(password, 10, async (err, hashed_password) => {
         
         let username = await generateUsername(email)
 
@@ -87,7 +93,7 @@ server.post("/signup", (req, res) => {
             personal_info: {
                 fullname,
                 email,
-                password: hased_password,
+                password: hashed_password,
                 username
             }
         })
