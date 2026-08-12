@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import InputBox from "../components/input.component";
 import googleIcon from "../imgs/google.png"
 import AnimationWrapper from "../common/page-animation";
@@ -6,15 +6,26 @@ import { Toaster, toast } from "react-hot-toast";
 import axios from "axios"
 
 import { storeInSession } from "../common/session"
+import { useContext } from "react";
+import { UserContext } from "../App";
 
 const UserAuthForm = ({ type }) => {
 
+    let { userAuth: { access_token }, setUserAuth } = useContext(UserContext)
+
+    /**
+     * Intregrate API Route, Sign up et Sign In
+     * 
+     * @param {*} serverRoute 
+     * @param {*} formData 
+     */
     const userAuthThroughServer = (serverRoute, formData) => {
         
         axios.post(import.meta.env.VITE_SERVER_DOMAIN + serverRoute, formData)
         .then(({ data }) => {
             storeInSession("user", JSON.stringify(data))
-            console.log(sessionStorage)
+            
+            setUserAuth(data)
         })
         .catch(({ response }) => {
             toast.error(response.data.error)
@@ -22,6 +33,13 @@ const UserAuthForm = ({ type }) => {
 
     }
 
+    /**
+     * 
+     * Submit Data, Lord du Sign up et Sign in
+     * 
+     * @param {*} e 
+     * @returns 
+     */
     const handleSubmit = (e) => {
         
         e.preventDefault()
@@ -83,6 +101,12 @@ const UserAuthForm = ({ type }) => {
     }
 
     return (
+
+        access_token 
+        ? 
+        <Navigate to="/" /> 
+        : 
+        (
         <AnimationWrapper keyValue={ type }>
             <section className="h-cover flex items-center justify-center">
                 <Toaster />
@@ -177,6 +201,7 @@ const UserAuthForm = ({ type }) => {
                 </form>
             </section>
         </AnimationWrapper>
+        )
     )
 }
 
