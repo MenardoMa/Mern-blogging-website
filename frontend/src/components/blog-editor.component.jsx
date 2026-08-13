@@ -14,6 +14,12 @@ const BlogEditor = () => {
     const [bannerPublicId, setBannerPublicId] = useState("")
     const [disabled, setDisabled] = useState(false)
 
+    /**
+     * Upload Image
+     * 
+     * @param {*} e 
+     * @returns 
+     */
     const handleBannerUpload = async (e) => {
         
         let img = e.target.files[0]
@@ -62,6 +68,18 @@ const BlogEditor = () => {
 
     }
     
+    const handleTitleKeyDown = async (e) => {
+       if(e.keyCode === 13){ // Enter
+            e.preventDefault()
+       }
+    }
+
+    const handleTitleChange = (e) => {
+        let input = e.target
+        input.style.height = 'auto'
+        input.style.height = input.scrollHeight + "px"
+    }
+
     return (
         <>
             <nav className="navbar">
@@ -111,6 +129,16 @@ const BlogEditor = () => {
                                 />
                             </label>
                         </div>
+
+                        <textarea
+                            placeholder="Blog Titre"
+                            className="text-4xl font-medium w-full h-20 outline-none resize-none mt-10 leading-tight placeholder:opacity-40"
+                            onKeyDown={handleTitleKeyDown}
+                            onChange={handleTitleChange}
+                        >
+
+                        </textarea>
+
                     </div>
                 </section>
             </AnimationWrapper>
