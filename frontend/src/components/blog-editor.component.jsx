@@ -3,11 +3,12 @@ import logo from "../imgs/logo.png"
 import AnimationWrapper from "../common/page-animation";
 
 import defaultBanner from "../imgs/blog-banner.png"
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import axios from "axios"
 import { Toaster, toast } from "react-hot-toast"
 import { EditorContext } from "../pages/editor.pages";
+import EditorJS from "@editorjs/editorjs";
 
 const BlogEditor = () => {
     
@@ -97,6 +98,23 @@ const BlogEditor = () => {
 
     }
 
+    // useEffet
+    useEffect(() => {
+
+        let editor = new EditorJS({
+            holder: "textEditor",
+            data: "",
+            placeholder: "Partagez vos idées, vos découvertes et vos expériences..."
+        })
+
+        return () => {
+            if (editor && typeof editor.destroy === "function") {
+                editor.destroy()
+            }
+        }
+
+    }, [])
+
     console.log(blog)
 
     return (
@@ -157,6 +175,13 @@ const BlogEditor = () => {
                         ></textarea>
 
                         <hr className="w-full opacity-10 my-5" />
+
+                        <div
+                            id="textEditor"
+                            className="font-gelasio"
+                        >
+
+                        </div>
 
                     </div>
                 </section>
