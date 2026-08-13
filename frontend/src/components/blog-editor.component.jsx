@@ -3,10 +3,11 @@ import logo from "../imgs/logo.png"
 import AnimationWrapper from "../common/page-animation";
 
 import defaultBanner from "../imgs/blog-banner.png"
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 import axios from "axios"
 import { Toaster, toast } from "react-hot-toast"
+import { EditorContext } from "../pages/editor.pages";
 
 const BlogEditor = () => {
     
@@ -14,6 +15,9 @@ const BlogEditor = () => {
     const [bannerPublicId, setBannerPublicId] = useState("")
     const [disabled, setDisabled] = useState(false)
 
+    let { blog, blog: { title, banner, content, tags, des }, setBlog } = useContext(EditorContext)
+
+    
     /**
      * Upload Image
      * 
@@ -45,6 +49,7 @@ const BlogEditor = () => {
 
             setBannerURL(data.url)
             setBannerPublicId(data.public_id)
+            setBlog({ ...blog, banner: data.url })
 
            toast.success("Image envoyée avec succès", {
                 id: loadingToast
@@ -68,17 +73,31 @@ const BlogEditor = () => {
 
     }
     
+    /**
+     * Annul Event Action
+     * @param {*} e 
+     */
     const handleTitleKeyDown = async (e) => {
        if(e.keyCode === 13){ // Enter
             e.preventDefault()
        }
     }
 
+    /**
+     * Change caracteres input
+     * 
+     * @param {*} e 
+     */
     const handleTitleChange = (e) => {
         let input = e.target
         input.style.height = 'auto'
         input.style.height = input.scrollHeight + "px"
+
+        setBlog({ ...blog, title: input.value })
+
     }
+
+    console.log(blog)
 
     return (
         <>
@@ -90,7 +109,7 @@ const BlogEditor = () => {
                     />
                 </Link>
                 <p className="max-md:hidden text-black line-clamp-1 w-full">
-                    Nouveau Blog
+                    { title.length ? title : "Nouveau Blog" }
                 </p>
 
                 <div className="flex gap-4 ml-auto">
@@ -135,9 +154,9 @@ const BlogEditor = () => {
                             className="text-4xl font-medium w-full h-20 outline-none resize-none mt-10 leading-tight placeholder:opacity-40"
                             onKeyDown={handleTitleKeyDown}
                             onChange={handleTitleChange}
-                        >
+                        ></textarea>
 
-                        </textarea>
+                        <hr className="w-full opacity-10 my-5" />
 
                     </div>
                 </section>
