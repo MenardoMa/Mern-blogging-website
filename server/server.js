@@ -180,7 +180,7 @@ server.post("/upload", upload.single("image"), async (req, res) => {
 
         banner: {
             width: 1600,
-            height: 900,
+            height: 1000,
             crop: "fill",
             gravity: "auto"
         },
@@ -190,7 +190,6 @@ server.post("/upload", upload.single("image"), async (req, res) => {
             crop: "limit"
         }
     }
-
 
     try {
 
