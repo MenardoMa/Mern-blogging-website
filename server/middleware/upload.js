@@ -10,6 +10,7 @@ const upload = multer({
     fileFilter: (req, file, cb) => {
 
         const allowedTypes = [
+            "image/jpg",
             "image/jpeg",
             "image/png",
             "image/webp"

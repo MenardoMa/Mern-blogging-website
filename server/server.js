@@ -5,9 +5,7 @@ import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import cors from "cors"
 
-// Reception fichier
-import multer from "multer"
-// Config Cloudinary
+import upload from './middleware/upload.js';
 import cloudinary from "./config/cloudinary.js"
 
 // aleatoire valeur
@@ -31,13 +29,6 @@ server.use(express.json())
 server.use(cors({
     origin: "http://localhost:5173"
 }))
-
-
-const storage = multer.memoryStorage()
-
-const upload = multer({
-    storage
-})
 
 mongoose.connect(process.env.DB_LOCATION, {
     autoIndex: true,
