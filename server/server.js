@@ -5,11 +5,15 @@ import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import cors from "cors"
 
+// Reception fichier
+import multer from "multer"
+// Config Cloudinary
+import cloudinary from "./cloudinary.js"
+
 // aleatoire valeur
 import { nanoid } from "nanoid"
 
 // Model
-
 import User from "./Schema/User.js"
 
 dotenv.config()
