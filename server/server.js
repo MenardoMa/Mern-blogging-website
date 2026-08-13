@@ -170,6 +170,28 @@ server.post("/upload", upload.single("image"), async (req, res) => {
         content: "blog-app/blog-content"
     }
 
+    // Transformation
+    const transformations = {
+        avatar: {
+            width: 256,
+            height: 256,
+            crop: "limit",
+        },
+
+        banner: {
+            width: 1600,
+            height: 900,
+            crop: "fill",
+            gravity: "auto"
+        },
+
+        content: {
+            width: 1200,
+            crop: "limit"
+        }
+    }
+
+
     try {
 
         // Vérifier qu'une image a été envoyée
@@ -181,6 +203,8 @@ server.post("/upload", upload.single("image"), async (req, res) => {
 
         // Vérifier le type de dossier
         const folder = allowedFolders[req.body.folder]
+        // Vérifier le type de crop par rapport au folder
+        const transformation = transformations[req.body.folder]
 
         if (!folder) {
             return res.status(400).json({
@@ -194,7 +218,8 @@ server.post("/upload", upload.single("image"), async (req, res) => {
             const stream = cloudinary.uploader.upload_stream(
                 {
                     folder,
-                    resource_type: "image"
+                    resource_type: "image",
+                    transformation
                 },
                 (error, result) => {
                     if (error) {
