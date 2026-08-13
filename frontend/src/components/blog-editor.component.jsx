@@ -12,6 +12,7 @@ const BlogEditor = () => {
     
     const [bannerURL, setBannerURL] = useState("")
     const [bannerPublicId, setBannerPublicId] = useState("")
+    const [disabled, setDisabled] = useState(false)
 
     const handleBannerUpload = async (e) => {
         
@@ -25,9 +26,11 @@ const BlogEditor = () => {
         formData.append("image", img)
         formData.append("folder", "banner")
 
+        let loadingToast = toast.loading("Téléversement en cours...")
+
         try {
 
-            let loadingToast = toast.loading("Téléversement en cours...")
+            setDisabled(true)
             
             const { data } = await axios.post(
                 import.meta.env.VITE_SERVER_DOMAIN + "/upload",
@@ -37,8 +40,9 @@ const BlogEditor = () => {
             setBannerURL(data.url)
             setBannerPublicId(data.public_id)
 
-            toast.dismiss(loadingToast)
-            toast.success("Image envoyée avec succès")
+           toast.success("Image envoyée avec succès", {
+                id: loadingToast
+            })
             console.log(data)
 
         } catch (error) {
@@ -47,8 +51,13 @@ const BlogEditor = () => {
 
             toast.error(
                 error.response?.data?.error ||
-                "Erreur lors de l'upload"
+                "Erreur lors de l'upload",
+                {
+                    id: loadingToast
+                }
             )
+        } finally{
+            setDisabled(false)
         } 
 
     }
@@ -67,10 +76,16 @@ const BlogEditor = () => {
                 </p>
 
                 <div className="flex gap-4 ml-auto">
-                    <button className="btn-dark cursor-pointer">
+                    <button 
+                        className="btn-dark cursor-pointer"
+                        disabled={disabled}
+                    >
                         Publier
                     </button>
-                    <button className="btn-light cursor-pointer">
+                    <button 
+                        className="btn-light cursor-pointer
+                        disabled={disabled}
+                    ">
                         Brouillon
                     </button>
                 </div>
@@ -84,7 +99,7 @@ const BlogEditor = () => {
                             <label htmlFor="uploadBanner">
                                 <img
                                     src={ bannerURL || defaultBanner }
-                                    className="z-20"
+                                    className="z-20 cursor-pointer"
                                 />
                                 <input 
                                     type="file" 
@@ -92,6 +107,7 @@ const BlogEditor = () => {
                                     accept=".png, .jpg, .jpeg, .webp"
                                     hidden
                                     onChange={handleBannerUpload}
+                                    disabled={disabled}
                                 />
                             </label>
                         </div>
