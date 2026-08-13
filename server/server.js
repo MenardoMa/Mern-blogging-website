@@ -160,6 +160,69 @@ server.post("/signin", (req, res) => {
 })
 
 
+// End-Point Upload Image
+server.post("/upload", upload.single("image"), async (req, res) => {
+
+    // Folder Accept
+    const allowedFolders = {
+        avatar: "blog-app/avatars",
+        banner: "blog-app/banners",
+        content: "blog-app/blog-content"
+    }
+
+    try {
+
+        // Vérifier qu'une image a été envoyée
+        if (!req.file) {
+            return res.status(400).json({
+                error: "Aucune image envoyée"
+            })
+        }
+
+        // Vérifier le type de dossier
+        const folder = allowedFolders[req.body.folder]
+
+        if (!folder) {
+            return res.status(400).json({
+                error: "Type d'image invalide"
+            })
+        }
+
+        // Upload vers Cloudinary
+        const result = await new Promise((resolve, reject) => {
+
+            const stream = cloudinary.uploader.upload_stream(
+                {
+                    folder,
+                    resource_type: "image"
+                },
+                (error, result) => {
+                    if (error) {
+                        reject(error)
+                    } else {
+                        resolve(result)
+                    }
+                }
+            )
+
+            stream.end(req.file.buffer)
+        })
+
+        return res.status(200).json({
+            url: result.secure_url,
+            public_id: result.public_id
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            error: "Erreur lors de l'upload de l'image"
+        })
+    }
+})
+
+
+
+
 
 server.listen(PORT, () => {
     console.log('Listening on port ' + PORT)
