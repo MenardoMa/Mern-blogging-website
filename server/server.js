@@ -8,7 +8,7 @@ import cors from "cors"
 // Reception fichier
 import multer from "multer"
 // Config Cloudinary
-import cloudinary from "./cloudinary.js"
+import cloudinary from "./config/cloudinary.js"
 
 // aleatoire valeur
 import { nanoid } from "nanoid"
@@ -31,6 +31,13 @@ server.use(express.json())
 server.use(cors({
     origin: "http://localhost:5173"
 }))
+
+
+const storage = multer.memoryStorage()
+
+const upload = multer({
+    storage
+})
 
 mongoose.connect(process.env.DB_LOCATION, {
     autoIndex: true,
