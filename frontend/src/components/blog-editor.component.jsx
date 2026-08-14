@@ -49,14 +49,17 @@ const BlogEditor = () => {
                 formData
             )
 
-            setBannerURL(data.url)
-            setBannerPublicId(data.public_id)
-            setBlog({ ...blog, banner: data.url })
+            // setBannerURL(data.url)
+            // setBannerPublicId(data.public_id)
+            // setBlog({ ...blog, banner: data.url })
+            setBlog(prev => ({
+                ...prev,
+                banner: data.url
+            }))
 
            toast.success("Image envoyée avec succès", {
                 id: loadingToast
             })
-            console.log(data)
 
         } catch (error) {
 
@@ -105,9 +108,7 @@ const BlogEditor = () => {
         const editor = new EditorJS({
             
             holder: "textEditor",
-            data: {
-                blocks: []
-            },
+            data: content,
             tools: tools,
             placeholder: "Partagez vos idées, vos découvertes et vos expériences...",
             
@@ -130,36 +131,36 @@ const BlogEditor = () => {
         
         e.preventDefault();
 
-        if(!banner.length){
-            return toast.error("Veuillez ajouter une bannière à votre blog")
-        }
+        // if(!banner.length){
+        //     return toast.error("Veuillez ajouter une bannière à votre blog")
+        // }
 
-        if (!title.length) {
-            return toast.error("Veuillez entrer un titre pour votre blog")
-        }
+        // if (!title.length) {
+        //     return toast.error("Veuillez entrer un titre pour votre blog")
+        // }
 
-        if (!textEditor) {
-            return toast.error("L'éditeur n'est pas encore prêt")
-        }
+        // if (!textEditor) {
+        //     return toast.error("L'éditeur n'est pas encore prêt")
+        // }
 
-        try {
+        // try {
 
-            // Attendre que EditorJS soit réellement prêt
-            await textEditor.isReady
-            const data = await textEditor.save()
+        //     // Attendre que EditorJS soit réellement prêt
+        //     await textEditor.isReady
+        //     const data = await textEditor.save()
 
-            if (!data.blocks || !data.blocks.length) {
-                return toast.error("Le contenu du blog est obligatoire")
-            }
+        //     if (!data.blocks || !data.blocks.length) {
+        //         return toast.error("Le contenu du blog est obligatoire")
+        //     }
 
-            setBlog(prev => ({ ...prev, content: data }))
+        //     setBlog(prev => ({ ...prev, content: data }))
             setEditorState("publish")
 
-        } catch (error) {
+        // } catch (error) {
 
-            console.error("Erreur lors de la sauvegarde :", error)
-            toast.error("Impossible de sauvegarder le contenu")
-        }
+        //     console.error("Erreur lors de la sauvegarde :", error)
+        //     toast.error("Impossible de sauvegarder le contenu")
+        // }
         
     }
 
@@ -200,7 +201,7 @@ const BlogEditor = () => {
                         <div className="relative aspect-video hover:opacity-80 bg-white border-4 border-grey">
                             <label htmlFor="uploadBanner">
                                 <img
-                                    src={ bannerURL || defaultBanner }
+                                    src={banner || defaultBanner}
                                     className="z-20 cursor-pointer"
                                 />
                                 <input 
@@ -215,6 +216,7 @@ const BlogEditor = () => {
                         </div>
 
                         <textarea
+                            defaultValue={title}
                             placeholder="Blog Titre"
                             className="text-4xl font-medium w-full h-20 outline-none resize-none mt-10 leading-tight placeholder:opacity-40"
                             onKeyDown={handleTitleKeyDown}
