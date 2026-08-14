@@ -2,6 +2,7 @@ import { Toaster, toast } from "react-hot-toast";
 import AnimationWrapper from "../common/page-animation";
 import { useContext } from "react";
 import { EditorContext } from "../pages/editor.pages";
+import Tag from "./tags.component";
 
 const PublishForm = () => {
     
@@ -98,6 +99,9 @@ const PublishForm = () => {
                             type="text" 
                             placeholder="Tags"
                             className="sticky input-box bg-white top-0 left-0 pl-4 mb-3 focus:bg-white"
+                        />
+                        <Tag
+                            tag="testing tag"
                         />
                     </div>
 
