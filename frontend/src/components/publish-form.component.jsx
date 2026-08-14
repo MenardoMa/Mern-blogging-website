@@ -7,6 +7,7 @@ import Tag from "./tags.component";
 const PublishForm = () => {
     
     let characterLimit = 200
+    let tagLimit = 10
     let { blog, blog: { banner, title, tags, des } ,setEditorState, setBlog } = useContext(EditorContext)
 
     const handleCloseEvent = (e) => {
@@ -32,6 +33,52 @@ const PublishForm = () => {
        if(e.keyCode === 13){ // Enter
             e.preventDefault()
        }
+    }
+
+    /**
+     * Add Tag Function
+     * 
+     * @param {*} e 
+     * @returns 
+     */
+    const handleKeyDown = (e) => {
+        if(e.keyCode == 13 || e.keyCode == 188){
+            e.preventDefault()
+
+            let tag = e.target.value
+
+            if (tags.length >= tagLimit) {
+                return toast.error(`Vous ne pouvez ajouter que ${tagLimit} tags maximum`);
+            }
+
+            if (tags.includes(tag)) {
+                return toast.error("Ce tag a déjà été ajouté");
+            }
+
+            if (tag.length) {
+                setBlog({
+                    ...blog,
+                    tags: [...tags, tag]
+                });
+            }
+
+            e.target.value = ""
+
+        }
+    }
+
+    /**
+     * 
+     * Delete Tag Function
+     * 
+     * @param {*} tagToRemove 
+     */
+    const handleTagDelete = (tagDelete) => {
+        setBlog({
+            ...blog,
+            tags: tags.filter(tag => tag !== tagDelete)
+        })
+        toast.success(`Le tag "${tagDelete}" a été supprimé`)
     }
 
     return (
@@ -99,10 +146,18 @@ const PublishForm = () => {
                             type="text" 
                             placeholder="Tags"
                             className="sticky input-box bg-white top-0 left-0 pl-4 mb-3 focus:bg-white"
+                            onKeyDown={handleKeyDown}
                         />
-                        <Tag
-                            tag="testing tag"
-                        />
+                        {
+                            tags.map((tag, i) => {
+                                return <Tag
+                                    key={i}
+                                    tag={tag}
+                                    onTagDelete={() => handleTagDelete(tag)}
+                                />
+                            })
+                        }
+                       
                     </div>
 
                 </div>
