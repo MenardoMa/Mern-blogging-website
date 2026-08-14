@@ -81,6 +81,49 @@ const PublishForm = () => {
         toast.success(`Le tag "${tagDelete}" a été supprimé`)
     }
 
+    /**
+     * 
+     * Edit Tag
+     * 
+     * @param {*} e 
+     * @param {*} tag 
+     * @param {*} i 
+     * @returns 
+     */
+    const handleTagEdit = (e, tag, i) => {
+        if (e.key === "Enter" || e.key === ",") {
+            e.preventDefault()
+
+            const newTag = e.currentTarget.innerText.trim()
+
+            // Tag vide
+            if (!newTag.length) {
+                toast.error("Le tag ne peut pas être vide")                
+                e.currentTarget.innerText = tag // Remettre l'ancien tag
+                return
+            }
+
+            // Vérifier les doublons
+            if (tags.some((item, index) => item === newTag && index !== i)) {
+                toast.error("Ce tag existe déjà")
+                e.currentTarget.innerText = tag
+                return
+            }
+
+            // Modifier le tag
+            setBlog({
+                ...blog,
+                tags: tags.map((item, index) =>
+                    index === i ? newTag : item
+                )
+            })
+
+            toast.success("Tag modifié avec succès")
+            e.currentTarget.setAttribute("contentEditable", false)
+
+        }
+    }
+
     return (
         <AnimationWrapper>
             <section className="w-screen min-h-screen grid items-center lg:grid-cols-2 py-16 lg:gap-4">
@@ -110,7 +153,7 @@ const PublishForm = () => {
                     </p>
                 </div>
 
-                <div className="border-grey lg:border-1 lg:pl-8">
+                <div className=" lg:pl-8">
                     <p className="text-dark-grey mb-2 mt-9">Titre de l'article</p>
                     <input 
                         type="text" 
@@ -153,12 +196,22 @@ const PublishForm = () => {
                                 return <Tag
                                     key={i}
                                     tag={tag}
-                                    onTagDelete={() => handleTagDelete(tag)}
+                                    onTagDelete={ () => handleTagDelete(tag) }
+                                    onTagEdit={ (e) => handleTagEdit(e, tag, i) }
                                 />
                             })
                         }
                        
                     </div>
+                    <p
+                        className="mt-1 mb-4 text-dark-grey text-right"
+                    >
+                        {  tagLimit - tags.length } tags restants
+                    </p>
+
+                    <button className="btn-dark">
+                        Publier
+                    </button>
 
                 </div>
 

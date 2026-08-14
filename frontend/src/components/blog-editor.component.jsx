@@ -131,36 +131,36 @@ const BlogEditor = () => {
         
         e.preventDefault();
 
-        // if(!banner.length){
-        //     return toast.error("Veuillez ajouter une bannière à votre blog")
-        // }
+        if(!banner.length){
+            return toast.error("Veuillez ajouter une bannière à votre blog")
+        }
 
-        // if (!title.length) {
-        //     return toast.error("Veuillez entrer un titre pour votre blog")
-        // }
+        if (!title.length) {
+            return toast.error("Veuillez entrer un titre pour votre blog")
+        }
 
-        // if (!textEditor) {
-        //     return toast.error("L'éditeur n'est pas encore prêt")
-        // }
+        if (!textEditor) {
+            return toast.error("L'éditeur n'est pas encore prêt")
+        }
 
-        // try {
+        try {
 
-        //     // Attendre que EditorJS soit réellement prêt
-        //     await textEditor.isReady
-        //     const data = await textEditor.save()
+            // Attendre que EditorJS soit réellement prêt
+            await textEditor.isReady
+            const data = await textEditor.save()
 
-        //     if (!data.blocks || !data.blocks.length) {
-        //         return toast.error("Le contenu du blog est obligatoire")
-        //     }
+            if (!data.blocks || !data.blocks.length) {
+                return toast.error("Le contenu du blog est obligatoire")
+            }
 
-        //     setBlog(prev => ({ ...prev, content: data }))
+            setBlog(prev => ({ ...prev, content: data }))
             setEditorState("publish")
 
-        // } catch (error) {
+        } catch (error) {
 
-        //     console.error("Erreur lors de la sauvegarde :", error)
-        //     toast.error("Impossible de sauvegarder le contenu")
-        // }
+            console.error("Erreur lors de la sauvegarde :", error)
+            toast.error("Impossible de sauvegarder le contenu")
+        }
         
     }
 
