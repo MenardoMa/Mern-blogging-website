@@ -17,7 +17,7 @@ const BlogEditor = () => {
     const [bannerPublicId, setBannerPublicId] = useState("")
     const [disabled, setDisabled] = useState(false)
 
-    let { blog, blog: { title, banner, content, tags, des }, setBlog } = useContext(EditorContext)
+    let { blog, blog: { title, banner, content, tags, des }, setBlog, setEditorState,  textEditor, setTextEditor } = useContext(EditorContext)
 
     
     /**
@@ -102,22 +102,66 @@ const BlogEditor = () => {
     // useEffet
     useEffect(() => {
 
-        let editor = new EditorJS({
+        const editor = new EditorJS({
+            
             holder: "textEditor",
-            data: "",
+            data: {
+                blocks: []
+            },
             tools: tools,
-            placeholder: "Partagez vos idées, vos découvertes et vos expériences..."
+            placeholder: "Partagez vos idées, vos découvertes et vos expériences...",
+            
+            onReady: () => {
+                setTextEditor(editor)
+            }
+
         })
 
         return () => {
-            if (editor && typeof editor.destroy === "function") {
+            if (typeof editor.destroy === "function") {
                 editor.destroy()
             }
         }
 
     }, [])
 
-    console.log(blog)
+    // Publish BTN
+    const handlePublishEvent = async (e) => {
+        
+        e.preventDefault();
+
+        if(!banner.length){
+            return toast.error("Veuillez ajouter une bannière à votre blog")
+        }
+
+        if (!title.length) {
+            return toast.error("Veuillez entrer un titre pour votre blog")
+        }
+
+        if (!textEditor) {
+            return toast.error("L'éditeur n'est pas encore prêt")
+        }
+
+        try {
+
+            // Attendre que EditorJS soit réellement prêt
+            await textEditor.isReady
+            const data = await textEditor.save()
+
+            if (!data.blocks || !data.blocks.length) {
+                return toast.error("Le contenu du blog est obligatoire")
+            }
+
+            setBlog(prev => ({ ...prev, content: data }))
+            setEditorState("publish")
+
+        } catch (error) {
+
+            console.error("Erreur lors de la sauvegarde :", error)
+            toast.error("Impossible de sauvegarder le contenu")
+        }
+        
+    }
 
     return (
         <>
@@ -136,6 +180,7 @@ const BlogEditor = () => {
                     <button 
                         className="btn-dark cursor-pointer"
                         disabled={disabled}
+                        onClick={handlePublishEvent}
                     >
                         Publier
                     </button>

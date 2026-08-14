@@ -7,7 +7,9 @@ import PublishForm from "../components/publish-form.component";
 const blogStructure = {
     title: "",
     banner: "",
-    content: [],
+    content: {
+        blocks: []
+    },
     tags: [],
     des: "",
     author: { personal_info: { } }
@@ -21,9 +23,10 @@ const Editor = () => {
 
     let { userAuth: { access_token } } = useContext(UserContext)
     const [editorState, setEditorState] = useState("editor")
+    const [textEditor, setTextEditor] = useState(null)
     
     return (
-        <EditorContext.Provider value={{blog, setBlog, editorState, setEditorState}}>
+        <EditorContext.Provider value={{blog, setBlog, editorState, setEditorState, textEditor, setTextEditor}}>
         {
             access_token === null 
             ? 
