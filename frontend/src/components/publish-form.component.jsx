@@ -3,12 +3,18 @@ import AnimationWrapper from "../common/page-animation";
 import { useContext } from "react";
 import { EditorContext } from "../pages/editor.pages";
 import Tag from "./tags.component";
+import axios from "axios";
+import { UserContext } from "../App";
+import { useNavigate } from "react-router-dom";
 
 const PublishForm = () => {
     
     let characterLimit = 200
     let tagLimit = 10
-    let { blog, blog: { banner, title, tags, des } ,setEditorState, setBlog } = useContext(EditorContext)
+    let { blog, blog: { banner, title, tags, des, content } ,setEditorState, setBlog } = useContext(EditorContext)
+
+    let {userAuth: { access_token } } = useContext(UserContext)
+    let navigate = useNavigate()
 
     const handleCloseEvent = (e) => {
         e.preventDefault()
@@ -124,6 +130,76 @@ const PublishForm = () => {
         }
     }
 
+    /**
+     * 
+     * Create Blog
+     * 
+     * @param {*} e 
+     * @returns 
+     */
+    const handlePublishBlog = (e) => {
+        
+        e.preventDefault()
+
+        if(e.currentTarget.className.includes("disable")){
+            return
+        }
+
+        if (!title.length) {
+            return toast.error("Le titre de l'article est obligatoire")
+        }
+
+        if (!des.length || des.length > 200) {
+            return toast.error("La description de l'article est obligatoire et doit contenir moins de "+ characterLimit +" caractères")
+        }
+
+        if (!tags.length) {
+            return toast.error("Veuillez ajouter au moins un tag à votre article")
+        }
+
+        if(tags.length > 10){
+            return toast.error("Vous pouvez ajouter au maximum 10 tags")
+        }
+
+        let loadingToast = toast.loading("Publication ...")
+
+        e.currentTarget.classList.add("disable")
+
+        let blogObj = {
+            title,
+            banner,
+            des, 
+            content,
+            tags,
+            draft: false
+        }
+
+        axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/create-blog", blogObj, {
+            headers: {
+                "Authorization": `Bearer ${access_token}`
+            }
+        }).then(() => {
+
+            e.currentTarget.classList.remove("disable")
+            toast.success("Article Publié avec succès", {
+                id: loadingToast
+            })
+
+            setTimeout(() => {
+                navigate("/")
+            }, 500)
+
+        }).catch(({ response }) => {
+
+            e.currentTarget.classList.remove("disable")
+            toast.error(response.data.error, {
+                id: loadingToast
+            })
+
+        })
+
+    }
+
     return (
         <AnimationWrapper>
             <section className="w-screen min-h-screen grid items-center lg:grid-cols-2 py-16 lg:gap-4">
@@ -187,7 +263,7 @@ const PublishForm = () => {
                     >
                         <input 
                             type="text" 
-                            placeholder="Tags"
+                            placeholder="Tags, Entre pour validé"
                             className="sticky input-box bg-white top-0 left-0 pl-4 mb-3 focus:bg-white"
                             onKeyDown={handleKeyDown}
                         />
@@ -209,7 +285,10 @@ const PublishForm = () => {
                         {  tagLimit - tags.length } tags restants
                     </p>
 
-                    <button className="btn-dark cursor-pointer">
+                    <button 
+                        className="btn-dark cursor-pointer"
+                        onClick={handlePublishBlog}
+                    >
                         Publier
                     </button>
 

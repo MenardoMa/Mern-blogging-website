@@ -272,7 +272,7 @@ server.post("/create-blog", verifyJWT, (req, res) => {
         return res.status(403).json({ error: "La bannière de l'article est obligatoire" })
     }
 
-    if (!content.blocks?.length) {
+    if (!content?.blocks?.length) {
         return res.status(400).json({ error: "Le contenu de l'article est obligatoire" })
     }
 
@@ -280,7 +280,7 @@ server.post("/create-blog", verifyJWT, (req, res) => {
         return res.status(400).json({  error: "Veuillez ajouter au moins un tag à votre article. Vous pouvez ajouter au maximum 10 tags" })
     }
 
-    tags = tags.map(tag => tag.toLowerCase()) 
+    tags = tags.map(tag => tag.trim().toLowerCase()) 
 
     let blog_id = title.normalize("NFD")
                 .replace(/[\u0300-\u036f]/g, "")
