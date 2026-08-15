@@ -140,8 +140,9 @@ const PublishForm = () => {
     const handlePublishBlog = (e) => {
         
         e.preventDefault()
+        let button = e.currentTarget
 
-        if(e.currentTarget.className.includes("disable")){
+        if(button.className.includes("disable")){
             return
         }
 
@@ -163,7 +164,7 @@ const PublishForm = () => {
 
         let loadingToast = toast.loading("Publication ...")
 
-        e.currentTarget.classList.add("disable")
+        button.classList.add("disable")
 
         let blogObj = {
             title,
@@ -180,7 +181,7 @@ const PublishForm = () => {
             }
         }).then(() => {
 
-            e.currentTarget.classList.remove("disable")
+            button.classList.remove("disable")
             toast.success("Article Publié avec succès", {
                 id: loadingToast
             })
@@ -191,7 +192,7 @@ const PublishForm = () => {
 
         }).catch(({ response }) => {
 
-            e.currentTarget.classList.remove("disable")
+            button.classList.remove("disable")
             toast.error(response.data.error, {
                 id: loadingToast
             })

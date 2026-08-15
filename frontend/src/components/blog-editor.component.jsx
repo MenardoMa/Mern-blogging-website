@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../imgs/logo.png"
 import AnimationWrapper from "../common/page-animation";
 
@@ -10,6 +10,7 @@ import { Toaster, toast } from "react-hot-toast"
 import { EditorContext } from "../pages/editor.pages";
 import EditorJS from "@editorjs/editorjs";
 import { tools } from "./tools.component";
+import { UserContext } from "../App";
 
 const BlogEditor = () => {
     
@@ -18,7 +19,9 @@ const BlogEditor = () => {
     const [disabled, setDisabled] = useState(false)
 
     let { blog, blog: { title, banner, content, tags, des }, setBlog, setEditorState,  textEditor, setTextEditor } = useContext(EditorContext)
+    let { userAuth: { access_token } } = useContext(UserContext)
 
+    const navigate = useNavigate()
     
     /**
      * Upload Image
@@ -164,6 +167,86 @@ const BlogEditor = () => {
         
     }
 
+    /**
+     * 
+     * Create Draft Blog
+     * 
+     * @param {*} e 
+     * @returns 
+     */
+    const handleSaveDraftBlog = async (e) => {
+        
+        e.preventDefault()
+        let button = e.currentTarget
+
+        if(button.className.includes("disable")){
+            return
+        }
+
+        if(!banner.length){
+            return toast.error("Veuillez ajouter une bannière à votre blog")
+        }
+
+        if (!title.length) {
+            return toast.error("Veuillez entrer un titre pour votre blog")
+        }
+
+        if (!textEditor) {
+            return toast.error("L'éditeur n'est pas encore prêt")
+        }
+
+        button.classList.add("disable")
+
+        // Attendre qu'EditorJS soit prêt
+        await textEditor.isReady
+
+        // Récupérer le contenu actuel de l'éditeur
+        const data = await textEditor.save()
+
+        // Vérifier le contenu
+        if (!data.blocks?.length) {
+            button.classList.remove("disable")
+            return toast.error("Veuillez entrer le contenu de votre blog")
+        }
+
+        // Mettre à jour le contexte
+        setBlog(prev => ({ ...prev, content: data }))
+
+        let loadingToast = toast.loading("Enregistrement du brouillon en cours...")
+
+        let blogObj = {
+            title,
+            banner,
+            content: data,
+            draft: true
+        }
+        
+        axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/create-blog", blogObj, {
+            headers: {
+                "Authorization": `Bearer ${access_token}`
+            }
+        }).then(() => {
+
+            button.classList.remove("disable")
+            toast.success("Article sauvegardé en brouillon avec succès", {
+                id: loadingToast
+            })
+
+            setTimeout(() => {
+                navigate("/")
+            }, 500)
+
+        }).catch(({ response }) => {
+
+            button.classList.remove("disable")
+            toast.error(response.data.error, {
+                id: loadingToast
+            })
+
+        })
+
+    }
+
     return (
         <>
             <nav className="navbar">
@@ -186,9 +269,10 @@ const BlogEditor = () => {
                         Publier
                     </button>
                     <button 
-                        className="btn-light cursor-pointer
+                        className="btn-light cursor-pointer"
                         disabled={disabled}
-                    ">
+                        onClick={handleSaveDraftBlog}
+                    >
                         Brouillon
                     </button>
                 </div>

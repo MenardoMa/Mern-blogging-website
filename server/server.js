@@ -264,23 +264,28 @@ server.post("/create-blog", verifyJWT, (req, res) => {
         return res.status(403).json({ error: "Le titre de l'article est obligatoire" })
     }
 
-    if (!des?.length || des?.length > 200) {
-        return res.status(403).json({ error: "La description de l'article est obligatoire et doit contenir moins de 200 caractères" })
+    if(!draft){
+        
+        if (!des?.length || des?.length > 200) {
+            return res.status(403).json({ error: "La description de l'article est obligatoire et doit contenir moins de 200 caractères" })
+        }
+
+        if (!banner?.length) {
+            return res.status(403).json({ error: "La bannière de l'article est obligatoire" })
+        }
+
+        if (!content?.blocks?.length) {
+            return res.status(400).json({ error: "Le contenu de l'article est obligatoire" })
+        }
+
+        if (!tags?.length || tags?.length > 10) {
+            return res.status(400).json({  error: "Veuillez ajouter au moins un tag à votre article. Vous pouvez ajouter au maximum 10 tags" })
+        }
+
+        tags = tags.map(tag => tag.trim().toLowerCase()) 
+
     }
 
-    if (!banner?.length) {
-        return res.status(403).json({ error: "La bannière de l'article est obligatoire" })
-    }
-
-    if (!content?.blocks?.length) {
-        return res.status(400).json({ error: "Le contenu de l'article est obligatoire" })
-    }
-
-    if (!tags?.length || tags?.length > 10) {
-        return res.status(400).json({  error: "Veuillez ajouter au moins un tag à votre article. Vous pouvez ajouter au maximum 10 tags" })
-    }
-
-    tags = tags.map(tag => tag.trim().toLowerCase()) 
 
     let blog_id = title.normalize("NFD")
                 .replace(/[\u0300-\u036f]/g, "")
