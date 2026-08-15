@@ -209,7 +209,7 @@ const PublishForm = () => {
                         {  tagLimit - tags.length } tags restants
                     </p>
 
-                    <button className="btn-dark">
+                    <button className="btn-dark cursor-pointer">
                         Publier
                     </button>
 

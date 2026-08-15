@@ -13,6 +13,7 @@ import { nanoid } from "nanoid"
 
 // Model
 import User from "./Schema/User.js"
+import { verifyJWT } from "./middleware/verifyJWT.js";
 
 dotenv.config()
 
@@ -245,6 +246,10 @@ server.post("/upload", upload.single("image"), async (req, res) => {
 })
 
 
+
+server.post("/create-blog", verifyJWT, (req, res) => {
+    return res.status(200).json(req.body)
+})
 
 
 
