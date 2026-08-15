@@ -14,8 +14,6 @@ import { UserContext } from "../App";
 
 const BlogEditor = () => {
     
-    const [bannerURL, setBannerURL] = useState("")
-    const [bannerPublicId, setBannerPublicId] = useState("")
     const [disabled, setDisabled] = useState(false)
 
     let { blog, blog: { title, banner, content, tags, des }, setBlog, setEditorState,  textEditor, setTextEditor } = useContext(EditorContext)
@@ -52,13 +50,7 @@ const BlogEditor = () => {
                 formData
             )
 
-            // setBannerURL(data.url)
-            // setBannerPublicId(data.public_id)
-            // setBlog({ ...blog, banner: data.url })
-            setBlog(prev => ({
-                ...prev,
-                banner: data.url
-            }))
+            setBlog(prev => ({ ...prev, banner: data.url }))
 
            toast.success("Image envoyée avec succès", {
                 id: loadingToast
