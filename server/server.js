@@ -13,6 +13,9 @@ import { nanoid } from "nanoid"
 
 // Model
 import User from "./Schema/User.js"
+import blogs from "./Schema/Blog.js"
+
+// Middleware
 import { verifyJWT } from "./middleware/verifyJWT.js";
 
 dotenv.config()
@@ -246,9 +249,77 @@ server.post("/upload", upload.single("image"), async (req, res) => {
 })
 
 
-
+/** 
+ * 
+ * End-point Create-Blog 
+ * 
+ */
 server.post("/create-blog", verifyJWT, (req, res) => {
-    return res.status(200).json(req.body)
+    
+    let authorId = req.user 
+
+    let { title, des, banner, tags, content, draft } = req.body
+
+    if (!title?.length) {
+        return res.status(403).json({ error: "Le titre de l'article est obligatoire" })
+    }
+
+    if (!des?.length || des?.length > 200) {
+        return res.status(403).json({ error: "La description de l'article est obligatoire et doit contenir moins de 200 caractères" })
+    }
+
+    if (!banner?.length) {
+        return res.status(403).json({ error: "La bannière de l'article est obligatoire" })
+    }
+
+    if (!content.blocks?.length) {
+        return res.status(400).json({ error: "Le contenu de l'article est obligatoire" })
+    }
+
+    if (!tags?.length || tags?.length > 10) {
+        return res.status(400).json({  error: "Veuillez ajouter au moins un tag à votre article. Vous pouvez ajouter au maximum 10 tags" })
+    }
+
+    tags = tags.map(tag => tag.toLowerCase()) 
+
+    let blog_id = title.normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/[^a-zA-Z0-9\s]/g, "")
+                .replace(/\s+/g, "-")
+                .trim() +"-"+ nanoid()
+
+    let blog = new blogs({
+        title,
+        des,
+        banner,
+        content,
+        tags,
+        author: authorId,
+        blog_id,
+        draft: Boolean(draft)
+    })
+
+    blog.save().then(blog => {
+
+        let incrementVal = draft ? 0 : 1
+
+        User.findOneAndUpdate(
+            {
+                _id: authorId
+            },
+            {
+                $inc: { "account_info.total_posts": incrementVal },
+                $push: { "blogs": blog._id }
+            }
+        ).then(user => {
+            return res.status(200).json({ id: blog.blog_id })
+        }).catch(err => {
+            return res.status(500).json({ error: "Une erreur est survenue lors de la mise à jour du nombre total d'articles" })
+        })
+
+    }).catch(err => {
+        return res.status(500).json({ error: err.message })
+    })
 })
 
 
