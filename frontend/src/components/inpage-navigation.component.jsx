@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-const InPageNavigation = ({ routes, defaultActiveIndex = 0, defaultHidden = [ ] }) => {
+const InPageNavigation = ({ routes, defaultActiveIndex = 0, defaultHidden = [ ], children }) => {
     
     let [inPageNavIndex, setInPageNavIndex] = useState(defaultActiveIndex)
     let activeTabLineRef = useRef()
@@ -51,6 +51,7 @@ const InPageNavigation = ({ routes, defaultActiveIndex = 0, defaultHidden = [ ] 
                 />
 
             </div>
+            { (Array.isArray(children)) ? children[inPageNavIndex] : children }
         </>
     )
 }
