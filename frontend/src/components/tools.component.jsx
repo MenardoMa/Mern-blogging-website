@@ -7,6 +7,7 @@ import Header from "@editorjs/header"
 import Quote from "@editorjs/quote"
 import Marker from "@editorjs/marker"
 import InlineCode from "@editorjs/inline-code"
+import Code from "@editorjs/code"
 
 import axios from "axios" // sert a publier l'image depuis Text Rich
 
@@ -92,6 +93,10 @@ export const tools = {
 
     inlineCode: {
         class: InlineCode
+    },
+    
+    code: {
+        class: Code
     }
 
 }
