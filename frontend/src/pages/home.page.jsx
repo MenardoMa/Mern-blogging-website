@@ -2,6 +2,8 @@ import axios from "axios";
 import AnimationWrapper from "../common/page-animation";
 import InPageNavigation from "../components/inpage-navigation.component";
 import { useEffect, useState } from "react";
+import Loader from "../components/loader.component";
+import BlogPostCard from "../components/blog-post.component";
 
 const HomePage = () => {
     
@@ -19,8 +21,6 @@ const HomePage = () => {
 
     }
 
-    console.log(blogs)
-
     useEffect(() => {
         fetchLatestBlogs()
     }, [])
@@ -36,7 +36,26 @@ const HomePage = () => {
                         defaultHidden={["Articles populaires"]}
                     >
 
-                       <h1>Les derniers articles</h1>
+                       <>
+                            {
+                                blogs === null ? <Loader /> 
+                                : 
+                                blogs.map((blog, i) => {
+                                    return (
+                                    <AnimationWrapper
+                                        key={i}
+                                        transition={{ duration: 1, delay: i * .1 }}
+                                    >
+                                        <BlogPostCard
+                                            content={ blog }
+                                            author={ blog.author.personal_info }
+                                        />
+                                    </AnimationWrapper>
+                                    
+                                )})
+                            }
+                       </>
+                       
                        <h1>Les articles tendance</h1>
 
                     </InPageNavigation>
