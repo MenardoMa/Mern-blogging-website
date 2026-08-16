@@ -83,7 +83,6 @@ const HomePage = () => {
      * 
      */
     useEffect(() => {
-        
 
         activeTabRef.current.click()
 
