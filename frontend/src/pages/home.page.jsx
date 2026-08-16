@@ -7,6 +7,7 @@ import BlogPostCard from "../components/blog-post.component";
 import MinimalBlogPost from "../components/nobanner-blog-post.component";
 
 import { activeTabRef } from "../components/inpage-navigation.component"
+import NoDataMessage from "../components/nodata.component";
 
 const HomePage = () => {
     
@@ -128,41 +129,58 @@ const HomePage = () => {
 
                        <>
                             {
-                                blogs === null ? <Loader /> 
+                                blogs === null ?( 
+                                    <Loader /> 
+                                )
                                 : 
-                                blogs.map((blog, i) => {
+                                    (
+                                        blogs.length ?
+                                        blogs.map((blog, i) => {
+                                        return (
+                                        <AnimationWrapper
+                                            key={i}
+                                            transition={{ duration: 1, delay: i * .1 }}
+                                        >
+                                            <BlogPostCard
+                                                content={ blog }
+                                                author={ blog.author.personal_info }
+                                            />
+                                        </AnimationWrapper>
+                                        
+                                    )})
+                                    :
+                                    <NoDataMessage 
+                                        message={"Aucun article trouvé pour cette catégorie."}
+                                    />
+                                )
+                            }
+                       </>
+                       
+                        {
+                            trendingBlogs === null ? (
+                                <Loader /> 
+                            )
+                            : 
+                            trendingBlogs.length ? (
+                                trendingBlogs.map((blog, i) => {
                                     return (
                                     <AnimationWrapper
                                         key={i}
                                         transition={{ duration: 1, delay: i * .1 }}
                                     >
-                                        <BlogPostCard
-                                            content={ blog }
-                                            author={ blog.author.personal_info }
+                                        <MinimalBlogPost 
+                                            key={i}
+                                            blog={blog}
+                                            index={i}
                                         />
                                     </AnimationWrapper>
-                                    
+                                        
                                 )})
-                            }
-                       </>
-                       
-                        {
-                            trendingBlogs === null ? <Loader /> 
-                            : 
-                            trendingBlogs.map((blog, i) => {
-                                return (
-                                <AnimationWrapper
-                                    key={i}
-                                    transition={{ duration: 1, delay: i * .1 }}
-                                >
-                                    <MinimalBlogPost 
-                                        key={i}
-                                        blog={blog}
-                                        index={i}
-                                    />
-                                </AnimationWrapper>
-                                    
-                            )})
+                            )
+                            :
+                            <NoDataMessage 
+                                message={"Aucun article populaire pour le moment."}
+                            />
                         }
 
                     </InPageNavigation>
@@ -199,22 +217,30 @@ const HomePage = () => {
                                 <i className="fi fi-rr-arrow-trend-up ml-3"></i>
                             </h1>
                             {
-                                trendingBlogs === null ? <Loader /> 
+                                trendingBlogs === null ? ( 
+                                    <Loader /> 
+                                )
                                 : 
-                                trendingBlogs.map((blog, i) => {
-                                    return (
-                                    <AnimationWrapper
-                                        key={i}
-                                        transition={{ duration: 1, delay: i * .1 }}
-                                    >
-                                        <MinimalBlogPost 
+                                    trendingBlogs.length ? (
+                                    trendingBlogs.map((blog, i) => {
+                                        return (
+                                        <AnimationWrapper
                                             key={i}
-                                            blog={blog}
-                                            index={i}
-                                        />
-                                    </AnimationWrapper>
-                                        
-                                )})
+                                            transition={{ duration: 1, delay: i * .1 }}
+                                        >
+                                            <MinimalBlogPost 
+                                                key={i}
+                                                blog={blog}
+                                                index={i}
+                                            />
+                                        </AnimationWrapper>
+                                            
+                                    )})
+                                )
+                                :
+                                <NoDataMessage 
+                                    message={"Aucun article populaire pour le moment."}
+                                />
                             }
                         </div>
                     </div>
