@@ -4,6 +4,7 @@ import InPageNavigation from "../components/inpage-navigation.component";
 import { useEffect, useState } from "react";
 import Loader from "../components/loader.component";
 import BlogPostCard from "../components/blog-post.component";
+import MinimalBlogPost from "../components/nobanner-blog-post.component";
 
 const HomePage = () => {
     
@@ -42,6 +43,11 @@ const HomePage = () => {
 
     }
 
+    /**
+     * 
+     * Charge Data
+     * 
+     */
     useEffect(() => {
         fetchLatestBlogs()
         fetchTrendingBlogs()
@@ -89,7 +95,11 @@ const HomePage = () => {
                                     key={i}
                                     transition={{ duration: 1, delay: i * .1 }}
                                 >
-                                    
+                                    <MinimalBlogPost 
+                                        key={i}
+                                        blog={blog}
+                                        index={i}
+                                    />
                                 </AnimationWrapper>
                                     
                             )})
