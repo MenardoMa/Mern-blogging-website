@@ -6,6 +6,8 @@ import Loader from "../components/loader.component";
 import BlogPostCard from "../components/blog-post.component";
 import MinimalBlogPost from "../components/nobanner-blog-post.component";
 
+import { activeTabRef } from "../components/inpage-navigation.component"
+
 const HomePage = () => {
     
     const [blogs, setBlogs] = useState(null)
@@ -81,9 +83,19 @@ const HomePage = () => {
      * 
      */
     useEffect(() => {
-        fetchLatestBlogs()
-        fetchTrendingBlogs()
-    }, [])
+        
+
+        activeTabRef.current.click()
+
+        if(pageState == "Accueil"){
+            fetchLatestBlogs()
+        }
+
+        if(!trendingBlogs){
+            fetchTrendingBlogs()
+        }
+
+    }, [pageState])
    
    
     return (
