@@ -41,7 +41,7 @@ const BlogPostCard = ({ content, author }) => {
                 <img 
                     src={ banner }
                     alt="Banner" 
-                    className="w-full h-full aspect-square object-cover"
+                    className="w-full h-full aspect-square object-cover border border-grey"
                 />
             </div>
         </Link>

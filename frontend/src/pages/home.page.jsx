@@ -10,19 +10,20 @@ const HomePage = () => {
     
     const [blogs, setBlogs] = useState(null)
     const [trendingBlogs, setTrendingBlogs] = useState(null)
+    const [pageState, setPageState] = useState("Accueil")
 
     const categories = [
-        "Développement Web",
-        "Frontend",
-        "Backend",
-        "Bases de données",
-        "DevOps & Cloud",
-        "Intelligence artificielle",
-        "Cybersécurité",
-        "Développement Mobile",
-        "Programmation",
-        "Carrière Tech",
-        "Outils & Productivité"
+        "développement web",
+        "frontend",
+        "backend",
+        "bases de données",
+        "devops & cloud",
+        "intelligence artificielle",
+        "cybersécurité",
+        "développement mobile",
+        "programmation",
+        "carrière tech",
+        "outils & productivité"
     ]
 
     /**
@@ -57,6 +58,23 @@ const HomePage = () => {
 
     }
 
+    const loadBlogByCategory = (e) => {
+        
+        e.preventDefault()
+
+        let category = e.target.innerText.toLowerCase();
+
+        setBlogs(null)
+
+        if(pageState == category){
+            setPageState("Accueil")
+            return 
+        }
+
+        setPageState(category)
+
+    }
+
     /**
      * 
      * Charge Data
@@ -66,8 +84,6 @@ const HomePage = () => {
         fetchLatestBlogs()
         fetchTrendingBlogs()
     }, [])
-
-    console.log(trendingBlogs)
    
    
     return (
@@ -76,7 +92,7 @@ const HomePage = () => {
                 {/* latest blog */}
                 <div className="w-full">
                     <InPageNavigation
-                        routes={["Accueil", "Articles populaires"]}
+                        routes={[pageState, "Articles populaires"]}
                         defaultHidden={["Articles populaires"]}
                     >
 
@@ -137,7 +153,8 @@ const HomePage = () => {
                                         return (
                                             <button
                                                 key={i}
-                                                className="tag cursor-pointer"
+                                                className={"tag cursor-pointer hover:opacity-60 duration-200 " + (pageState === category ? "bg-black text-white duration-100" : " ")}
+                                                onClick={loadBlogByCategory}
                                             >
                                                 { category }
                                             </button>
