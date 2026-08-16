@@ -17,6 +17,7 @@ import blogs from "./Schema/Blog.js"
 
 // Middleware
 import { verifyJWT } from "./middleware/verifyJWT.js";
+import Blog from "./Schema/Blog.js";
 
 dotenv.config()
 
@@ -325,6 +326,37 @@ server.post("/create-blog", verifyJWT, (req, res) => {
     }).catch(err => {
         return res.status(500).json({ error: err.message })
     })
+})
+
+/**
+ * 
+ * End-point get Latest Blogs
+ * 
+ */
+server.get("/latest-blogs", (req, res) => {
+
+    const maxLimit = 5
+
+    Blog.find({ draft: false })
+        .populate(
+            "author",
+            "personal_info.profile_img personal_info.username personal_info.fullname -_id"
+        )
+        .sort({ publishedAt: -1 })
+        .select("blog_id title des banner activity tags publishedAt -_id")
+        .limit(maxLimit)
+        .then(blogs => {
+
+            return res.status(200).json({ blogs })
+
+        })
+        .catch(err => {
+
+            return res.status(500).json({
+                error: err.message
+            })
+
+        })
 })
 
 
