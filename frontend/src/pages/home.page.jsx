@@ -11,6 +11,20 @@ const HomePage = () => {
     const [blogs, setBlogs] = useState(null)
     const [trendingBlogs, setTrendingBlogs] = useState(null)
 
+    const categories = [
+        "Développement Web",
+        "Frontend",
+        "Backend",
+        "Bases de données",
+        "DevOps & Cloud",
+        "Intelligence artificielle",
+        "Cybersécurité",
+        "Développement Mobile",
+        "Programmation",
+        "Carrière Tech",
+        "Outils & Productivité"
+    ]
+
     /**
      * Fetch Latest Blogs
      */
@@ -108,8 +122,55 @@ const HomePage = () => {
                     </InPageNavigation>
                 </div>
                 {/* filter and trending blog */}
-                <div>
+                <div
+                    className="min-w-[40%] lg:min-w-[400px] max-w-min border-l border-grey pl-8 pt-3 max-md:hidden"
+                >
+                    <div 
+                        className="flex flex-col gap-10"
+                    >
+                        <div>
+                            <h1 className="font-medium text-xl mb-8">Articles sur tous les centres d’intérêt</h1>
 
+                            <div className="flex flex-wrap gap-3">
+                                {
+                                    categories.map((category, i) => {
+                                        return (
+                                            <button
+                                                key={i}
+                                                className="tag cursor-pointer"
+                                            >
+                                                { category }
+                                            </button>
+                                        )
+                                    })
+                                }
+                            </div>
+                        </div>
+                        <div>
+                            <h1 className="font-medium text-xl mb-8">
+                                Populaires
+                                <i className="fi fi-rr-arrow-trend-up ml-3"></i>
+                            </h1>
+                            {
+                                trendingBlogs === null ? <Loader /> 
+                                : 
+                                trendingBlogs.map((blog, i) => {
+                                    return (
+                                    <AnimationWrapper
+                                        key={i}
+                                        transition={{ duration: 1, delay: i * .1 }}
+                                    >
+                                        <MinimalBlogPost 
+                                            key={i}
+                                            blog={blog}
+                                            index={i}
+                                        />
+                                    </AnimationWrapper>
+                                        
+                                )})
+                            }
+                        </div>
+                    </div>
                 </div>
             </section>
         </AnimationWrapper>

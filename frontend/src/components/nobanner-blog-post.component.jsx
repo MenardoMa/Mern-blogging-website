@@ -11,7 +11,7 @@ const MinimalBlogPost = ({ blog, index }) => {
             className="flex gap-5 mb-4"
         >
             <h1 
-                className="blog-index"
+                className="blog-index md:hidden"
             >
                 {index < 10 ? "0" + (index + 1) : index}
             </h1>
