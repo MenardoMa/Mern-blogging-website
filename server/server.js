@@ -400,7 +400,20 @@ server.get("/trending-blogs", (req, res) => {
 server.post("/search-blogs", (req, res) => {
 
     let { tag } = req.body
-    let findQuery = {tags: tag, draft: false }
+
+    if (!tag) {
+        return res.status(400).json({
+            error: "Le tag est requis"
+        })
+    }
+
+    tag = tag.trim().toLowerCase()
+
+    let findQuery = {
+        tags: tag,
+        draft: false
+    }
+    
     let maxLimit = 5;
 
     Blog.find( findQuery )

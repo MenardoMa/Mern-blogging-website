@@ -16,8 +16,8 @@ const HomePage = () => {
 
     const categories = [
         "développement web",
-        "frontend",
-        "backend",
+        "technologie",
+        "design & ui/ux",
         "bases de données",
         "devops & cloud",
         "intelligence artificielle",
@@ -25,7 +25,8 @@ const HomePage = () => {
         "développement mobile",
         "programmation",
         "carrière tech",
-        "outils & productivité"
+        "outils & productivité",
+        "freelance"
     ]
 
     /**
@@ -60,11 +61,28 @@ const HomePage = () => {
 
     }
 
+    const fetchBlogsByCategory = ( category ) => {
+        
+        axios.post(
+            import.meta.env.VITE_SERVER_DOMAIN + "/search-blogs",
+            {
+                tag: category
+            }
+        )
+        .then(({ data }) => {
+            setBlogs(data.blogs)
+        })
+        .catch(err => {
+            console.log(err.message)
+        })
+
+    }
+
     const loadBlogByCategory = (e) => {
         
         e.preventDefault()
 
-        let category = e.target.innerText.toLowerCase();
+        let category = e.currentTarget.innerText.trim().toLowerCase()   
 
         setBlogs(null)
 
@@ -74,6 +92,7 @@ const HomePage = () => {
         }
 
         setPageState(category)
+        fetchBlogsByCategory(category)
 
     }
 
