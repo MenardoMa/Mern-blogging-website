@@ -335,7 +335,7 @@ server.post("/create-blog", verifyJWT, (req, res) => {
  */
 server.post("/latest-blogs", (req, res) => {
 
-    let page = parseInt(req.body)
+    let page = parseInt(req.body.page)
 
     const maxLimit = 5
 
@@ -452,7 +452,7 @@ server.post("/all-latest-blogs-count", (req, res) => {
         console.log(err.message)
         return res.status(500).json({ error: err.message })
     })
-    
+
 })
 
 server.listen(PORT, () => {

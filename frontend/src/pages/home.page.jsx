@@ -9,6 +9,7 @@ import MinimalBlogPost from "../components/nobanner-blog-post.component";
 import { activeTabRef } from "../components/inpage-navigation.component"
 import NoDataMessage from "../components/nodata.component";
 import { filterPaginationData } from "../common/filter-pagination-data";
+import LoadMoreDataBtn from "../components/load-more.component";
 
 const HomePage = () => {
     
@@ -34,14 +35,12 @@ const HomePage = () => {
     /**
      * Fetch Latest Blogs
      */
-    const fetchLatestBlogs = ( page = 1 ) => {
+    const fetchLatestBlogs = ( { page = 1 } ) => {
 
         axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/latest-blogs", {
             page
         })
         .then( async ({ data }) => {
-
-            console.log(data.blogs)
 
             let formatedDate = await filterPaginationData({
                 
@@ -51,8 +50,6 @@ const HomePage = () => {
                 counteRoute: "/all-latest-blogs-count"
 
             })
-
-            console.log(formatedDate)
 
             setBlogs(formatedDate)
 
@@ -138,7 +135,7 @@ const HomePage = () => {
         activeTabRef.current.click()
 
         if(pageState == "Accueil"){
-            fetchLatestBlogs()
+            fetchLatestBlogs({ page: 1 })
         }
 
         if(!trendingBlogs){
@@ -165,8 +162,8 @@ const HomePage = () => {
                                 )
                                 : 
                                     (
-                                        blogs.length ?
-                                        blogs.map((blog, i) => {
+                                        blogs.results.length ?
+                                        blogs.results.map((blog, i) => {
                                         return (
                                         <AnimationWrapper
                                             key={i}
@@ -185,6 +182,10 @@ const HomePage = () => {
                                     />
                                 )
                             }
+                            <LoadMoreDataBtn
+                                state={blogs}
+                                fetchDataFun={fetchLatestBlogs}
+                            />
                        </>
                        
                         {
