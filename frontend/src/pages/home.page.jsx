@@ -37,7 +37,7 @@ const HomePage = () => {
      */
     const fetchLatestBlogs = ( { page = 1 } ) => {
 
-        axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/latest-blogs", {
+        return axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/latest-blogs", {
             page
         })
         .then( async ({ data }) => {
@@ -85,7 +85,7 @@ const HomePage = () => {
      */
     const fetchBlogsByCategory = ( category, { page = 1 } ) => {
         
-        axios.post(
+        return axios.post(
             import.meta.env.VITE_SERVER_DOMAIN + "/search-blogs",
             {
                 tag: category,
@@ -205,7 +205,7 @@ const HomePage = () => {
                                         pageState === "Accueil" ? 
                                         fetchLatestBlogs
                                         :
-                                        fetchBlogsByCategory
+                                        (params) => fetchBlogsByCategory(pageState, params)
                                     )
                                 }
                             />
