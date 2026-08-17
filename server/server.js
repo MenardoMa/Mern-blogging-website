@@ -402,7 +402,7 @@ server.get("/trending-blogs", (req, res) => {
  */
 server.post("/search-blogs", (req, res) => {
 
-    let { tag } = req.body
+    let { tag, page } = req.body
 
     if (!tag) {
         return res.status(400).json({
@@ -426,6 +426,7 @@ server.post("/search-blogs", (req, res) => {
         )
         .sort({ "activity.total_reads": -1, "activity.total_likes": -1, "publishedAt": -1 }) // trie descroissante
         .select("blog_id title des banner activity tags publishedAt -_id")                  // on recup sauf -_id
+        .skip((page - 1) * maxLimit)
         .limit(maxLimit)
         .then(blogs => {
 
@@ -442,6 +443,11 @@ server.post("/search-blogs", (req, res) => {
 
 })
 
+/**
+ * 
+ * End-point Count Documents All Latest
+ * 
+ */
 server.post("/all-latest-blogs-count", (req, res) => {
 
     Blog.countDocuments({ draft: false })
@@ -451,6 +457,28 @@ server.post("/all-latest-blogs-count", (req, res) => {
     .catch(err => {
         console.log(err.message)
         return res.status(500).json({ error: err.message })
+    })
+
+})
+
+/** 
+ * 
+ * End-point Count Documents lors du filtre Tag
+ * 
+ */
+server.post("/search-blogs-count", (req, res) => {
+
+    let { tag } = req.body
+
+    let findQuery = { tags: tag, draft: false }
+
+    Blog.countDocuments(findQuery)
+    .then(count => {
+        return res.status(200).json({ totalDocs: count })
+    })
+    .catch(err => {
+        console.log(err.message)
+        return res.status(200).json({ error: err.message })
     })
 
 })

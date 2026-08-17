@@ -83,16 +83,30 @@ const HomePage = () => {
      * 
      * @param {*} category 
      */
-    const fetchBlogsByCategory = ( category ) => {
+    const fetchBlogsByCategory = ( category, { page = 1 } ) => {
         
         axios.post(
             import.meta.env.VITE_SERVER_DOMAIN + "/search-blogs",
             {
-                tag: category
+                tag: category,
+                page
             }
         )
-        .then(({ data }) => {
-            setBlogs(data.blogs)
+        .then( async ({ data }) => {
+            
+            let formatedDate = await filterPaginationData({
+                
+                state: page === 1 ? null : blogs,
+                data: data.blogs,
+                page,
+                counteRoute: "/search-blogs-count",
+                data_to_send: {
+                    tag: category
+                }
+            })
+
+            setBlogs(formatedDate)
+
         })
         .catch(err => {
             console.log(err.message)
@@ -121,7 +135,7 @@ const HomePage = () => {
         }
 
         setPageState(category)
-        fetchBlogsByCategory(category)
+        fetchBlogsByCategory(category, { page: 1 })
 
     }
 
@@ -136,6 +150,8 @@ const HomePage = () => {
 
         if(pageState == "Accueil"){
             fetchLatestBlogs({ page: 1 })
+        }else{
+            fetchBlogsByCategory(pageState, { page: 1 })
         }
 
         if(!trendingBlogs){
