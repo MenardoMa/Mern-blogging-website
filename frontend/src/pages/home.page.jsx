@@ -33,11 +33,14 @@ const HomePage = () => {
     /**
      * Fetch Latest Blogs
      */
-    const fetchLatestBlogs = () => {
+    const fetchLatestBlogs = ( page = 3 ) => {
 
-        axios.get(import.meta.env.VITE_SERVER_DOMAIN + "/latest-blogs")
+        axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/latest-blogs", {
+            page
+        })
         .then(({ data }) => {
-            setBlogs(data.blogs)
+            // setBlogs(data.blogs)
+            console.log( data )
         })
         .catch(err => {
             console.log(err.message)
@@ -62,6 +65,12 @@ const HomePage = () => {
 
     }
 
+    /**
+     * 
+     * Fetch Blogs By tag 
+     * 
+     * @param {*} category 
+     */
     const fetchBlogsByCategory = ( category ) => {
         
         axios.post(
@@ -79,7 +88,14 @@ const HomePage = () => {
 
     }
 
-    const loadBlogByCategory = (e) => {
+    /**
+     * 
+     * HandleLoadBlogByCategory (Event)
+     * 
+     * @param {*} e 
+     * @returns 
+     */
+    const handleLoadBlogByCategory = (e) => {
         
         e.preventDefault()
 
@@ -202,7 +218,7 @@ const HomePage = () => {
                                             <button
                                                 key={i}
                                                 className={"tag cursor-pointer hover:opacity-60 duration-200 " + (pageState === category ? "bg-black text-white duration-100" : " ")}
-                                                onClick={loadBlogByCategory}
+                                                onClick={handleLoadBlogByCategory}
                                             >
                                                 { category }
                                             </button>

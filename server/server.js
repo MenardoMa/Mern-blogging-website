@@ -333,7 +333,9 @@ server.post("/create-blog", verifyJWT, (req, res) => {
  * End-point get Latest Blogs
  * 
  */
-server.get("/latest-blogs", (req, res) => {
+server.post("/latest-blogs", (req, res) => {
+
+    let page = parseInt(req.body)
 
     const maxLimit = 5
 
@@ -344,6 +346,7 @@ server.get("/latest-blogs", (req, res) => {
         )
         .sort({ publishedAt: -1 })
         .select("blog_id title des banner activity tags publishedAt -_id")
+        .skip((page - 1) * maxLimit)
         .limit(maxLimit)
         .then(blogs => {
 
@@ -413,7 +416,7 @@ server.post("/search-blogs", (req, res) => {
         tags: tag,
         draft: false
     }
-    
+
     let maxLimit = 5;
 
     Blog.find( findQuery )
