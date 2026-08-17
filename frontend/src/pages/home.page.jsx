@@ -173,7 +173,7 @@ const HomePage = () => {
 
                        <>
                             {
-                                blogs === null ?( 
+                                blogs === null ? ( 
                                     <Loader /> 
                                 )
                                 : 
