@@ -200,7 +200,14 @@ const HomePage = () => {
                             }
                             <LoadMoreDataBtn
                                 state={blogs}
-                                fetchDataFun={fetchLatestBlogs}
+                                fetchDataFun={
+                                    (
+                                        pageState === "Accueil" ? 
+                                        fetchLatestBlogs
+                                        :
+                                        fetchBlogsByCategory
+                                    )
+                                }
                             />
                        </>
                        
