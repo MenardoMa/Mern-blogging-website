@@ -8,6 +8,7 @@ import MinimalBlogPost from "../components/nobanner-blog-post.component";
 
 import { activeTabRef } from "../components/inpage-navigation.component"
 import NoDataMessage from "../components/nodata.component";
+import { filterPaginationData } from "../common/filter-pagination-data";
 
 const HomePage = () => {
     
@@ -33,14 +34,24 @@ const HomePage = () => {
     /**
      * Fetch Latest Blogs
      */
-    const fetchLatestBlogs = ( page = 3 ) => {
+    const fetchLatestBlogs = ( page = 1 ) => {
 
         axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/latest-blogs", {
             page
         })
         .then(({ data }) => {
-            // setBlogs(data.blogs)
-            console.log( data )
+
+            let formatedDate = filterPaginationData({
+                
+                state: blogs,
+                data: data.blogs,
+                page,
+                counteRoute: "/all-latest-blogs-count"
+
+            })
+
+            setBlogs(formatedDate)
+
         })
         .catch(err => {
             console.log(err.message)
