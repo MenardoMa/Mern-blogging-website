@@ -519,11 +519,41 @@ server.post("/search-blogs-count", (req, res) => {
     })
     .catch(err => {
         console.log(err.message)
-        return res.status(200).json({ error: err.message })
+        return res.status(500).json({ error: err.message })
     })
 
 })
 
+
+/**
+ * 
+ * Search Users
+ * 
+ */
+server.post("/search-users", (req, res) => {
+
+    let { query } = req.body 
+
+    if (!query || !query.trim()) {
+        return res.status(400).json({
+            error: "La recherche est requise"
+        })
+    }
+
+    query = query.trim()
+
+    User.find({ "personal_info.username": new RegExp(query, 'i') })
+    .limit(10)
+    .select("personal_info.fullname personal_info.username personal_info.profile_img -_id")
+    .then(users => {
+        return res.status(200).json({ users })
+    })
+    .catch(err => {
+        console.log(err.message)
+        return res.status(500).json({ error: err.message })
+    })
+
+})
 
 
 server.listen(PORT, () => {
