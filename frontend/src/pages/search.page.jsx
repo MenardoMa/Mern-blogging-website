@@ -8,6 +8,7 @@ import LoadMoreDataBtn from "../components/load-more.component";
 import BlogPostCard from "../components/blog-post.component";
 import axios from "axios";
 import { filterPaginationData } from "../common/filter-pagination-data";
+import UserCard from "../components/usercard.component";
 
 
 const SearchPage = () => {
@@ -103,7 +104,9 @@ const SearchPage = () => {
                               key={i}  
                               transition={{ duration: 1, delay: i * 0.08 } }
                             >
-                                
+                                <UserCard
+                                    user={user}
+                                />
                             </AnimationWrapper>
                         })
                     :
