@@ -7,12 +7,12 @@ const UserCard = ({ user }) => {
     return (
         <Link
             to={`/user/${username}`}
-            className="flex gap-5 items-center mb-5"
+            className="flex gap-5 items-center mb-5 mt-2"
         >
             <img 
                 src={ profile_img }
                 alt="avatar" 
-                className="w-14 h-14 rounded-full"
+                className="w-12 h-12 rounded-full"
             />
 
             <div>
