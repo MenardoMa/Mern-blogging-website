@@ -432,7 +432,7 @@ server.post("/search-blogs", (req, res) => {
         })
     }
 
-    let maxLimit = 2;
+    let maxLimit = 5;
 
     Blog.find( findQuery )
         .populate(
@@ -523,6 +523,8 @@ server.post("/search-blogs-count", (req, res) => {
     })
 
 })
+
+
 
 server.listen(PORT, () => {
     console.log('Listening on port ' + PORT)
