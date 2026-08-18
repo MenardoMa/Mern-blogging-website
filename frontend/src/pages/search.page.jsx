@@ -53,12 +53,17 @@ const SearchPage = () => {
 
     useEffect(() => {
 
-
-        searchBlogs({ page: 1 })
+        resetState()
+        searchBlogs({ page: 1, create_new_arr: true })
 
     }, [query])
 
-
+    /**
+     * Reset State
+     */
+    const resetState = () => {
+        setBlogs(null)
+    }
     
     return (
         <section className="h-cover flex justify-center gap-10">
@@ -91,21 +96,16 @@ const SearchPage = () => {
                                     )})
                                     :
                                     <NoDataMessage 
-                                        message={"Aucun article trouvé pour cette catégorie."}
+                                        message={`Aucun article trouvé pour "${query}".`}
                                     />
                                 )
                             }
-                            {/* <LoadMoreDataBtn
+                            <LoadMoreDataBtn
                                 state={blogs}
                                 fetchDataFun={
-                                    (
-                                        pageState === "Accueil" ? 
-                                        fetchLatestBlogs
-                                        :
-                                        (params) => fetchBlogsByCategory(pageState, params)
-                                    )
+                                   searchBlogs
                                 }
-                            /> */}
+                            />
                     </>
 
                 </InPageNavigation>

@@ -40,10 +40,10 @@ const Navbar = () => {
      */
     const handleSearch = (e) => {
         
-        let query = e.target.value;
+        let query = e.target.value.trim();
 
-        if( e.keyCode == 13 && query.length ){
-            navigate(`/search/${query}`)
+        if (e.key === "Enter" && query.length) {
+            navigate(`/search/${encodeURIComponent(query)}`)
         }
 
     }

@@ -403,7 +403,6 @@ server.get("/trending-blogs", (req, res) => {
 server.post("/search-blogs", (req, res) => {
 
     let { tag, query, page } = req.body
-
     let findQuery;
 
     if(tag){
@@ -414,22 +413,26 @@ server.post("/search-blogs", (req, res) => {
             draft: false 
         }
 
-    }else if( query ){
+    }else if(query?.trim()){
         
+        query = query.trim()
+
         findQuery = { 
             draft: false, 
-            title: new RegExp(query, 'i') 
+            $or: [
+                { title: new RegExp(query, "i") },
+                { des: new RegExp(query, "i") },
+                { tags: new RegExp(query, "i") }
+            ]
         }
 
     }else {
-
         return res.status(400).json({
             error: "Un tag ou une recherche est requis"
         })
-
     }
 
-    let maxLimit = 5;
+    let maxLimit = 2;
 
     Blog.find( findQuery )
         .populate(
@@ -480,9 +483,35 @@ server.post("/all-latest-blogs-count", (req, res) => {
  */
 server.post("/search-blogs-count", (req, res) => {
 
-    let { tag } = req.body
+    let { tag, query } = req.body
 
-    let findQuery = { tags: tag, draft: false }
+    let findQuery
+
+    if (tag) {
+
+        tag = tag.trim().toLowerCase()
+        findQuery = {
+            tags: tag,
+            draft: false
+        }
+
+    } else if (query?.trim()) {
+
+        query = query.trim()
+        findQuery = {
+            draft: false,
+            $or: [
+                { title: new RegExp(query, "i") },
+                { des: new RegExp(query, "i") },
+                { tags: new RegExp(query, "i") }
+            ]
+        }
+
+    } else {
+        return res.status(400).json({
+            error: "Un tag ou une recherche est requis"
+        })
+    }
 
     Blog.countDocuments(findQuery)
     .then(count => {
