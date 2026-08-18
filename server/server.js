@@ -402,19 +402,31 @@ server.get("/trending-blogs", (req, res) => {
  */
 server.post("/search-blogs", (req, res) => {
 
-    let { tag, page } = req.body
+    let { tag, query, page } = req.body
 
-    if (!tag) {
+    let findQuery;
+
+    if(tag){
+    
+        tag = tag.trim().toLowerCase()
+        findQuery = { 
+            tags: tag, 
+            draft: false 
+        }
+
+    }else if( query ){
+        
+        findQuery = { 
+            draft: false, 
+            title: new RegExp(query, 'i') 
+        }
+
+    }else {
+
         return res.status(400).json({
-            error: "Le tag est requis"
+            error: "Un tag ou une recherche est requis"
         })
-    }
 
-    tag = tag.trim().toLowerCase()
-
-    let findQuery = {
-        tags: tag,
-        draft: false
     }
 
     let maxLimit = 5;
