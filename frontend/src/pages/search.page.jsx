@@ -24,7 +24,7 @@ const SearchPage = () => {
     const searchBlogs = ({ page = 1, create_new_arr = false }) => {
 
         axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/search-blogs", {  
-            tag: query, 
+            query, 
             page 
         })
         .then( async ({ data }) => {
@@ -36,7 +36,7 @@ const SearchPage = () => {
                 page,
                 counteRoute: "/search-blogs-count",
                 data_to_send: {
-                    tag: query
+                    query
                 },
                 create_new_arr
 
