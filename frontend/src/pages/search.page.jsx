@@ -62,7 +62,7 @@ const SearchPage = () => {
         axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/search-users", {  
             query
         })
-        .then(({ data : { users }}) => {
+        .then(({ data: { users } }) => {
             setUsers( users )
         })
         .catch(err => {
@@ -86,6 +86,34 @@ const SearchPage = () => {
         setBlogs(null)
         searchUsers(null)
     }
+
+    /**
+     * 
+     * Component UserCardWrapper
+     * 
+     */
+    const UserCardWrapper = () => {
+        return (
+            <>
+                {
+                    users === null ? <Loader /> :
+                    users.length ?
+                        users.map((user, i) => {
+                            return <AnimationWrapper
+                              key={i}  
+                              transition={{ duration: 1, delay: i * 0.08 } }
+                            >
+                                
+                            </AnimationWrapper>
+                        })
+                    :
+                    <NoDataMessage
+                        message={"Aucun utilisateur trouvé."}
+                    />
+                }
+            </>
+        )
+    }
     
     return (
         <section className="h-cover flex justify-center gap-10">
@@ -94,7 +122,6 @@ const SearchPage = () => {
                     routes={[`Recherche "${query}"`, "Comptes correspondants"]}
                     defaultHidden={"Comptes correspondants"}
                 >
-
                     <>
                             {
                                 blogs === null ? ( 
@@ -129,6 +156,8 @@ const SearchPage = () => {
                                 }
                             />
                     </>
+                
+                   <UserCardWrapper /> 
 
                 </InPageNavigation>
             </div>
