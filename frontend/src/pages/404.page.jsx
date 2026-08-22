@@ -27,6 +27,11 @@ const PageNotFound = () => {
                     Retour à l’accueil
                </Link>
             </p>
+            <div className="mt-auto">
+                <p className="text-dark-grey">
+                    Essayez une autre page ou revenez à l’accueil.
+                </p>
+            </div>
         </section>
     )
 }
