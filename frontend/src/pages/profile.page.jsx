@@ -1,6 +1,9 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import AnimationWrapper from "../common/page-animation";
+import Loader from "../components/loader.component";
+import { UserContext } from "../App";
 
 export const profileDataStructure = {
     "personal_info": {
@@ -31,6 +34,7 @@ const ProfilePage = () => {
         } = profile
     
     const [loading, setLoading] = useState(true)
+    const { userAuth: { username } } = useContext(UserContext)
 
     const fetchUserProfile = () => {
         axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/get-profile", {
@@ -38,20 +42,72 @@ const ProfilePage = () => {
         })
         .then(({ data: user }) => {
             setProfile(user)
+            setLoading(false)
         })
         .catch(err => {
             console.log(err)
+            setLoading(false)
         })
     }
 
     useEffect(() => {
 
+        resetState()
         fetchUserProfile()
 
-    }, [])
+    }, [profileId])
+
+    /**
+     * 
+     * Reset data, a chaque fois que le composant est reload
+     * 
+     */
+    const resetState = () => {
+        setProfile(profileDataStructure)
+        setLoading(true)
+    }
     
     return (
-        <h1>Profile {profileId}</h1>
+        <AnimationWrapper>
+            {
+                loading ? 
+                <Loader /> 
+                :
+                <section
+                    className="h-cover md:flex flex-row-reverse items-start gap-5 min-[1100px]:gap-12"
+                >
+                    <div className="flex flex-col max-md:items-center gap-5 min-w-[250px]">
+                        <img 
+                            src={ profile_img } 
+                            alt="Avatar"
+                            className="w-48 h-48 bg-grey rounded-full md:w-32 md:h-32" 
+                        />
+                        <h1 className="text-2xl font-medium">@{profile_username}</h1>
+                        <p className="text-xl capitalize h-6">{fullname}</p>
+                        <p>
+                            { total_posts.toLocaleString() } Articles ,  
+                            { total_reads.toLocaleString() } Lectures totales
+                        </p>
+
+                        <div className="flex gap-4 mt-2">
+                            {
+                                profileId === username ?
+                                <Link
+                                    to="setting/edit-profile"
+                                    className="btn-light rounded-md"
+                                >
+                                    Éditer profil
+                                </Link>
+                                :
+                                " "
+                            }
+                           
+                        </div>
+
+                    </div>
+                </section>
+            }
+        </AnimationWrapper>
     )
 }
 
