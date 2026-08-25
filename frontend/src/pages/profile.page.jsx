@@ -6,6 +6,10 @@ import Loader from "../components/loader.component";
 import { UserContext } from "../App";
 import AboutUser from "../components/about.component";
 import { filterPaginationData } from "../common/filter-pagination-data";
+import InPageNavigation from "../components/inpage-navigation.component";
+import BlogPostCard from "../components/blog-post.component";
+import NoDataMessage from "../components/nodata.component";
+import LoadMoreDataBtn from "../components/load-more.component";
 
 export const profileDataStructure = {
     "personal_info": {
@@ -63,7 +67,7 @@ const ProfilePage = () => {
      */
     const getBlogs = ({ page = 1, user_id }) => {
         
-        user_id = user_id == undefined ? blogs.user_id : user_id
+        user_id = user_id === undefined ? blogs?.user_id : user_id
         
         axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/search-blogs", {
             author: user_id,
@@ -149,6 +153,53 @@ const ProfilePage = () => {
                             joinedAt={joinedAt}
                         />
                     </div>
+
+                    <div className="max-md:mt-12 w-full">
+                        
+                        <InPageNavigation
+                        routes={["Blogs Publiés", "A Propos"]}
+                        defaultHidden={["A Propos"]}
+                    >
+
+                       <>
+                            {
+                                blogs === null ? ( 
+                                    <Loader /> 
+                                )
+                                : 
+                                    (
+                                        blogs.results.length ?
+                                        blogs.results.map((blog, i) => {
+                                        return (
+                                        <AnimationWrapper
+                                            key={i}
+                                            transition={{ duration: 1, delay: i * .1 }}
+                                        >
+                                            <BlogPostCard
+                                                content={ blog }
+                                                author={ blog.author.personal_info }
+                                            />
+                                        </AnimationWrapper>
+                                        
+                                    )})
+                                    :
+                                    <NoDataMessage message={"Vous n’avez encore publié aucun article."} />
+                                )
+                            }
+                            <LoadMoreDataBtn state={blogs} fetchDataFun={ getBlogs } />
+                       </>
+
+                       <AboutUser 
+                            bio={bio}
+                            social_links={social_links}
+                            joinedAt={joinedAt}
+                        />
+                       
+
+                    </InPageNavigation>
+
+                    </div>
+
                 </section>
             }
         </AnimationWrapper>
