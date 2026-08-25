@@ -5,6 +5,7 @@ import AnimationWrapper from "../common/page-animation";
 import Loader from "../components/loader.component";
 import { UserContext } from "../App";
 import AboutUser from "../components/about.component";
+import { filterPaginationData } from "../common/filter-pagination-data";
 
 export const profileDataStructure = {
     "personal_info": {
@@ -37,18 +38,56 @@ const ProfilePage = () => {
     const [loading, setLoading] = useState(true)
     const { userAuth: { username } } = useContext(UserContext)
 
+    const [blogs, setBlogs] = useState(null)
+
     const fetchUserProfile = () => {
         axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/get-profile", {
             username: profileId
         })
         .then(({ data: user }) => {
             setProfile(user)
+            getBlogs({ user_id: user._id })
             setLoading(false)
         })
         .catch(err => {
             console.log(err)
             setLoading(false)
         })
+    }
+
+    /**
+     * 
+     * Get Blogs As User
+     * 
+     * @param {*} param
+     */
+    const getBlogs = ({ page = 1, user_id }) => {
+        
+        user_id = user_id == undefined ? blogs.user_id : user_id
+        
+        axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/search-blogs", {
+            author: user_id,
+            page
+        })
+        .then( async ({ data }) => {
+            
+            let formatedDate = await filterPaginationData({
+                state: blogs,
+                data: data.blogs,
+                page,
+                counteRoute: "/search-blogs-count",
+                data_to_send: { author: user_id }
+            })
+
+            formatedDate.user_id = user_id
+
+            setBlogs(formatedDate)
+
+        })
+        .catch(err => {
+            console.log(err)
+        })
+
     }
 
     useEffect(() => {
