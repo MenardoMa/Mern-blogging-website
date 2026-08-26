@@ -6,6 +6,7 @@ import Loader from "../components/loader.component";
 import { getDay } from "../common/date";
 import BlogInteraction from "../components/blog-interaction.component";
 import BlogPostCard from "../components/blog-post.component";
+import BlogContent from "../components/blog-content.component";
 
 /**
  * 
@@ -139,8 +140,8 @@ const BlogPage = () => {
                                             key={i}
                                             className="my-4 md:my-8"
                                         >
-                                            <BlogContext
-                                                content={block}
+                                            <BlogContent
+                                                block={ block }
                                             />
                                         </div>
                                     )
