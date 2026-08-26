@@ -1,6 +1,63 @@
+import { useContext } from "react";
+import { BlogContext } from "../pages/blog.page";
+import { Link } from "react-router-dom";
+import { UserContext } from "../App";
+
 const BlogInteraction = () => {
+    
+    const { 
+        blog: { blog_id, activity, activity: { total_likes, total_comments },
+        author: { personal_info: { username: author_username } } },
+        setBlog 
+    } = useContext(BlogContext)
+
+    const { userAuth: { username } } = useContext(UserContext)
+
     return (
-        <h1>Blog interaction</h1>
+        <>
+            <hr className="border-grey my-2" />
+
+            <div className="flex items-center justify-between gap-6">
+                
+                <div className="flex gap-3 items-center">
+                    <button className="w-10 h-10 rounded-full flex items-center justify-center bg-grey/80 cursor-pointer">
+                        <i className="fi fi-rr-heart"></i>
+                    </button>
+                    <p className="text-xl text-dark-grey">
+                        { total_likes }
+                    </p>
+
+                    <button className="w-10 h-10 rounded-full flex items-center justify-center bg-grey/80 cursor-pointer">
+                        <i className="fi fi-rr-comment-dots"></i>
+                    </button>
+                    <p className="text-xl text-dark-grey">
+                        { total_comments }
+                    </p>
+                </div>
+
+                <div className="flex gap-3 items-center">
+                    {
+                        username === author_username 
+                        ?
+                        <Link 
+                            to={`/editor/${blog_id}`}
+                            className="underline underline-offset-2 hover:text-purple"
+                        >
+                            Editer
+                        </Link>
+                        :
+                        ""
+                    }
+                    
+                    {/* <Link>
+                        <i className="fi fi-brands-twitter"></i>
+                    </Link> */}
+                </div>
+
+            </div>
+
+            <hr className="border-grey my-2" />
+        </>
     )
 }
 
