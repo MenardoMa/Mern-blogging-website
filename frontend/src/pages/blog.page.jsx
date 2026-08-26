@@ -2,10 +2,27 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
+/**
+ * 
+ * Add structure
+ * 
+ */
+export const blogStructure = {
+    title: "",
+    des: "",
+    content: [],
+    tags: [],
+    author: { personal_info: { } },
+    banner: "",
+    publishedAt: ""
+}
+
 const BlogPage = () => {
     
     const { blog_id } = useParams()
-    const [blog, setBlog] = useState(null)
+    const [blog, setBlog] = useState(blogStructure)
+
+    const { title, des, content, banner, author: { personal_info: { fullname, username, profile_img } }, publishedAt } = blog
 
     /**
      * 
