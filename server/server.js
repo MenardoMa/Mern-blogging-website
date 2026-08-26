@@ -402,7 +402,7 @@ server.get("/trending-blogs", (req, res) => {
  */
 server.post("/search-blogs", (req, res) => {
 
-    let { tag, query, author, page } = req.body
+    let { tag, query, author, page, limit, eliminate_blog } = req.body
     let findQuery;
 
     if(tag){
@@ -410,7 +410,8 @@ server.post("/search-blogs", (req, res) => {
         tag = tag.trim().toLowerCase()
         findQuery = { 
             tags: tag, 
-            draft: false 
+            draft: false,
+            blog_id: { $ne: eliminate_blog }
         }
 
     }else if(query?.trim()){
@@ -439,7 +440,7 @@ server.post("/search-blogs", (req, res) => {
         })
     }
 
-    let maxLimit = 5;
+    let maxLimit = limit ? limit : 2;
 
     Blog.find( findQuery )
         .populate(
