@@ -66,12 +66,22 @@ const BlogPage = () => {
 
 
     useEffect(() => {
-    
+        
+        resetStates()
         fetchBlog()
 
-    }, [])
+    }, [blog_id])
 
-
+    /**
+     * 
+     * reset State 
+     * 
+     */
+    const resetStates = () => {
+        setBlog(blogStructure)
+        setSimilarBlogs(null)
+        setLoading(true)
+    }
     
     return (
         <AnimationWrapper>
