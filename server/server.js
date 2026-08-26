@@ -599,6 +599,12 @@ server.post("/get-blog", (req, res) => {
 
     let { blog_id } = req.body 
 
+    if (!blog_id) {
+        return res.status(400).json({
+            error: "L'identifiant de l'article est requis"
+        })
+    }
+
     let incrementVal = 1
 
     Blog.findOneAndUpdate(
@@ -607,13 +613,33 @@ server.post("/get-blog", (req, res) => {
             $inc: {
                 "activity.total_reads": incrementVal
             }
+        },
+        {
+            new: true
         }
-    ).populate(
-        "author", "personal_info.fullname personal_info.username personal_info.profile_img"
-    ).select(
+    )
+    .populate(
+        "author", 
+        "personal_info.fullname personal_info.username personal_info.profile_img"
+    )
+    .select(
         "title des content banner activity publishedAt blog_id tags"
-    ).then(blog => {
-    
+    )
+    .then(blog => {
+        
+        User.findOneAndUpdate(
+            {
+                "personal_info.username": blog.author.personal_info.username
+            },
+            {
+                $inc: { 
+                    "account_info.total_reads": incrementVal
+                }
+            }
+        ).catch(err => {
+            return res.status(500).json({ error: err.message })
+        })
+
         return res.status(200).json({ blog })
     
     }).catch(err => {
