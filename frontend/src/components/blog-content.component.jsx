@@ -1,3 +1,7 @@
+import hljs from "highlight.js"
+import "highlight.js/styles/github-dark.css"
+
+
 const BlogContent = ({ block }) => {
 
     const { type, data } = block
@@ -174,15 +178,43 @@ const BlogContent = ({ block }) => {
         // CODE
         // --------------------------------
 
-        case "code":
-            return (
-                <pre className="bg-grey p-5 rounded-lg overflow-x-auto mb-6">
-                    <code>
-                        {data.code}
-                    </code>
-                </pre>
-            )
+       case "code": {
 
+            const result = hljs.highlightAuto(data.code || "")
+
+            return (
+                <div className="overflow-hidden border border-gray-700">
+
+                    {/* Header */}
+                    <div className="flex items-center justify-between bg-[#1e1e1e] px-4">
+
+                        {/* Mac buttons */}
+                        <div className="flex gap-2">
+                            <span className="w-3 h-3 rounded-full bg-red-500"></span>
+                            <span className="w-3 h-3 rounded-full bg-yellow-500"></span>
+                            <span className="w-3 h-3 rounded-full bg-green-500"></span>
+                        </div>
+
+                        {/* Detected language */}
+                        <span className="text-xs text-gray-400 uppercase">
+                            code
+                        </span>
+
+                    </div>
+
+                    {/* Code */}
+                    <pre className="bg-[#0d1117] overflow-x-auto text-sm">
+                        <code
+                            className="hljs text-xl py-0"
+                            dangerouslySetInnerHTML={{
+                                __html: result.value
+                            }}
+                        />
+                    </pre>
+
+                </div>
+            )
+        }
 
         // --------------------------------
         // IMAGE
